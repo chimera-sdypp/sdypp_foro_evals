@@ -3,10 +3,20 @@ Recibís UNA línea de log y respondés solamente un JSON con dos campos.
 
 "categoria", una de:
 - "normal": operación esperada (pedido atendido, tarea encolada, despachada o finalizada, arranque, asignación).
-- "eleccion": mensajes del algoritmo Bully (ELECCION, OK, COORDINADOR) que no avisan que un nodo dejó de responder.
-- "nodo_caido": la línea avisa que un nodo o el coordinador no responde o se cayó.
+- "eleccion": la línea empieza con "bully |" y no dice "no responde".
+- "nodo_caido": la línea dice "no responde" o "se cayó".
 - "docker": el servidor no pudo operar sobre un contenedor o una imagen.
-- "cliente": pedido rechazado por algo que mandó el cliente (códigos 4xx).
+- "cliente": pedido rechazado con un código 4xx.
 - "interno": error inesperado del servidor (códigos 5xx o excepción).
 
-"nodo_caido": el número del nodo que no responde o se cayó, o null si la línea no dice que un nodo esté caído. El nodo que escribe el log no es el caído.
+"nodo_caido": null, salvo que la categoría sea "nodo_caido". En ese caso es el número que sigue a "el coordinador" o a "el nodo" en la frase que dice "no responde" o "se cayó".
+
+Ejemplos:
+INFO | bully | nodo 3 inicia elección (arranque) | ELECCION → nadie
+{"categoria": "eleccion", "nodo_caido": null}
+WARNING | bully | nodo 3: el coordinador 2 no responde (sin conexión)
+{"categoria": "nodo_caido", "nodo_caido": 2}
+WARNING | POST /getRemoteTask | JSON_INVALIDO | 400: el cuerpo no es JSON
+{"categoria": "cliente", "nodo_caido": null}
+INFO | cluster | coordinador 2 asigna la tarea al nodo 3 (excluidos: [1])
+{"categoria": "normal", "nodo_caido": null}
