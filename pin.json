@@ -1,0 +1,6 @@
+{
+  "modelo": "llama3.2:1b",
+  "digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+  "servidor": "ollama/ollama:0.40.0@sha256:1bef639749741b375e9a1eb2c1346fb57ce52f5432de1f74846e44ccc18e1687",
+  "opciones": {"temperature": 0, "seed": 42, "num_ctx": 4096, "num_predict": 64}
+}

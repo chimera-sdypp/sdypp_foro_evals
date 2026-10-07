@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "categoria": {
+      "type": "string",
+      "enum": ["normal", "eleccion", "nodo_caido", "docker", "cliente", "interno"]
+    },
+    "nodo_caido": {
+      "anyOf": [{"type": "integer"}, {"type": "null"}]
+    }
+  },
+  "required": ["categoria", "nodo_caido"],
+  "additionalProperties": false
+}

@@ -1,0 +1,30 @@
+name: Evals
+
+# Gate de evals. En cada PR se corre el mismo set contra dos versiones: la de la rama base
+# y la del PR (prompt.txt + pin.json). El script, el set, el esquema y el umbral salen
+# siempre de la base. Si la versión nueva pierde más de X casos el job falla, y como el
+# check es obligatorio en main, el PR no se puede mergear.
+on:
+  pull_request:
+
+jobs:
+  regresion:
+    name: Regresión A/B
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      # Las actions también van fijadas por commit: un tag como v7 se puede mover.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: candidata
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - name: Instalar dependencias
+        run: pip install -r base/requirements.txt
+      - name: Comparar la base contra la candidata
+        run: python base/evals/comparar.py --base base --candidata candidata
